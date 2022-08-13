@@ -1,0 +1,9 @@
+.exercises {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+}
+
+.exercises li {
+    padding: 2rem;
+}
