@@ -1,16 +1,119 @@
 import styles from './Workout.module.css';
+import testData from '../testData';
+import exercisesData from '../exercisesData';
+import React from 'react';
+import { StyleRegistry } from 'styled-jsx';
 
 export default function Workout() {
+    const [exercises, setExercises] = React.useState([]);
+    const [newExercise, setNewExercise] = React.useState({ name: "", resistance: "", sets: [] });
+
+    React.useEffect(() => {
+        const saved = localStorage.getItem("exercises");
+        if (saved) {
+
+            setExercises(prevExercises => JSON.parse(saved));
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (exercises.length > 0) {
+            localStorage.setItem("exercises", JSON.stringify(exercises));
+        }
+    }, [exercises])
+
+    const handleNameChange = (event) => {
+        setNewExercise(prevState => {
+            return { ...prevState, name: event.target.value }
+        });
+    }
+
+    const handleResistanceChange = (event) => {
+        setNewExercise(prevState => {
+            return { ...prevState, resistance: event.target.value }
+        })
+
+    }
+
+    const handleSetsChange = (event) => {
+        let newSets = [];
+        for (let i = 1; i <= event.target.value; i++) {
+            newSets.push({ number: i, reps: 0 })
+        }
+        setNewExercise(prevState => {
+            return { ...prevState, sets: newSets }
+        })
+    }
+
+    const newExerciseSubmit = (event) => {
+        setExercises(prevState => {
+            return [...prevState, newExercise]
+        })
+        event.preventDefault();
+    }
+
+    const updateReps = (event, exerciseId, setNumber) => {
+        let newReps = event.target.value;
+        setExercises(prevState => {
+            console.log(event.target.value)
+            return prevState.map(ex => {
+                if (ex.id === exerciseId) {
+                    let updatedSets = ex.sets.map(s =>
+                        s.number === setNumber ? { ...s, reps: newReps } : { ...s }
+                    );
+                    return { ...ex, sets: updatedSets }
+                }
+                return { ...ex };
+            })
+        })
+    }
+
     return (
-        <>
-            <ul className={styles.exercises}>
-                <li>Bench</li>
-                <li> 55 </li>
-                <li><input placeholder="Set 1"></input></li>
-                <li><input placeholder="Set 2"></input></li>
-                <li><input placeholder="Set 3"></input></li>
-                <button>Save</button>
-            </ul>
-        </>
+        <div className={styles.workout}>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Exercise</th>
+                        <th>Resistance</th>
+                        <th>Sets</th>
+                    </tr>
+
+                    {exercises.map(ex => (
+                        <tr key={ex.name}>
+                            <td>{ex.name}</td>
+                            <td>{ex.resistance} lbs</td>
+                            <td className={styles.sets}>
+                                {ex.sets.map(set => (
+                                    <div key={set.number}>
+                                        <input
+                                            className={styles.setsInput}
+                                            placeholder={`Set ${set.number} reps`}
+                                            onChange={(event) => updateReps(event, ex.id, set.number)}
+                                            name={ex.id}
+                                        >
+                                        </input>
+                                    </div>
+                                ))}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            <form onSubmit={newExerciseSubmit}>
+                <select onChange={handleNameChange}>
+                    <option>Select Exercise</option>
+                    {exercisesData.map(ex => (
+                        <option key={ex.id} value={ex.name}> {ex.name} </option>
+                    ))}
+                </select>
+                <input type="number" placeholder="Enter Resistance" onChange={handleResistanceChange}></input>
+                <input type="number" placeholder="Enter Sets" onChange={handleSetsChange}></input>
+                <input type="submit" value="Add Exercise" />
+            </form>
+            <div className={styles.workoutButtons}>
+                <button> Record Workout </button>
+            </div>
+        </div >
     )
 }

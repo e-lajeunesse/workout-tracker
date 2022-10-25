@@ -1,10 +1,13 @@
 import Header from '../Components/Header';
+import exercisesData from '../exercisesData';
 
 export default function Exercises() {
     return (
         <>
             <Header />
-            <h1>list of exercises</h1>
+            {exercisesData.map((ex) => (
+                <h3 key={ex.id}> {ex.name}</h3>
+            ))}
         </>
     );
 }
