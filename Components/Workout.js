@@ -3,10 +3,12 @@ import testData from '../testData';
 import exercisesData from '../exercisesData';
 import React from 'react';
 import { StyleRegistry } from 'styled-jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export default function Workout() {
     const [exercises, setExercises] = React.useState([]);
-    const [newExercise, setNewExercise] = React.useState({ name: "", resistance: "", sets: [] });
+    const [newExercise, setNewExercise] = React.useState({});
 
     React.useEffect(() => {
         const saved = localStorage.getItem("exercises");
@@ -22,9 +24,14 @@ export default function Workout() {
         }
     }, [exercises])
 
+    // see if better way to handle this
     const handleNameChange = (event) => {
+        if (event.target.value === "label") {
+            return;
+        }
+        const target = exercisesData.find(ex => ex.id == event.target.value);
         setNewExercise(prevState => {
-            return { ...prevState, name: event.target.value }
+            return { ...prevState, id: target.id, name: target.name }
         });
     }
 
@@ -52,6 +59,10 @@ export default function Workout() {
         event.preventDefault();
     }
 
+    const deleteExercise = (id) => {
+        setExercises(prevExercises => prevExercises.filter((ex) => ex.id !== id));
+    }
+
     const updateReps = (event, exerciseId, setNumber) => {
         let newReps = event.target.value;
         setExercises(prevState => {
@@ -70,12 +81,14 @@ export default function Workout() {
 
     return (
         <div className={styles.workout}>
+
             <table>
                 <tbody>
                     <tr>
                         <th>Exercise</th>
                         <th>Resistance</th>
                         <th>Sets</th>
+                        <th></th>
                     </tr>
 
                     {exercises.map(ex => (
@@ -95,16 +108,18 @@ export default function Workout() {
                                     </div>
                                 ))}
                             </td>
+                            <td><FontAwesomeIcon icon={faTrash} onClick={() => deleteExercise(ex.id)} /></td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
+
             <form onSubmit={newExerciseSubmit}>
                 <select onChange={handleNameChange}>
-                    <option>Select Exercise</option>
+                    <option value="label">Select Exercise</option>
                     {exercisesData.map(ex => (
-                        <option key={ex.id} value={ex.name}> {ex.name} </option>
+                        <option key={ex.id} value={ex.id}> {ex.name} </option>
                     ))}
                 </select>
                 <input type="number" placeholder="Enter Resistance" onChange={handleResistanceChange}></input>
