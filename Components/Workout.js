@@ -1,16 +1,18 @@
 import styles from './Workout.module.css';
 import testData from '../testData';
 import exercisesData from '../exercisesData';
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { StyleRegistry } from 'styled-jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 export default function Workout() {
-    const [exercises, setExercises] = React.useState([]);
-    const [newExercise, setNewExercise] = React.useState({});
+    const [title, setTitle] = useState("");
+    const [newTitle, setNewTitle] = useState("");
+    const [exercises, setExercises] = useState([]);
+    const [newExercise, setNewExercise] = useState({});
 
-    React.useEffect(() => {
+    useEffect(() => {
         const saved = localStorage.getItem("exercises");
         if (saved) {
 
@@ -18,13 +20,23 @@ export default function Workout() {
         }
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (exercises.length > 0) {
             localStorage.setItem("exercises", JSON.stringify(exercises));
         }
     }, [exercises])
 
-    // see if better way to handle this
+    const handleTitleChange = (event) => {
+        setNewTitle(event.target.value);
+    }
+
+    const submitNewTitle = (event) => {
+        console.log(newTitle);
+        setTitle(newTitle);
+        event.preventDefault();
+    }
+
+    // see if better way to handle this, make a custom dropdown?
     const handleNameChange = (event) => {
         if (event.target.value === "label") {
             return;
@@ -81,7 +93,17 @@ export default function Workout() {
 
     return (
         <div className={styles.workout}>
-
+            <div>
+                {title.length > 0 ? 
+                    <div>
+                        <h2>{title}</h2>
+                        <FontAwesomeIcon icon={faPenToSquare} onClick={() => setTitle("")} />
+                    </div>:
+                    <form onSubmit={submitNewTitle}>
+                        <input type="text" placeholder="Enter Workout Title" onChange={handleTitleChange}></input>
+                        <input type="submit" value="Set Workout Title" />
+                    </form>}
+            </div>
             <table>
                 <tbody>
                     <tr>
