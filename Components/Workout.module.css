@@ -3,6 +3,28 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    padding-top: 5rem;
+}
+
+.title {
+    align-self: flex-start;
+    padding-left: 9.5rem;
+}
+
+.titleEdit {
+    display: flex;
+    align-items: center;    
+}
+
+.titleSet {
+    display:flex;
+    height:2rem;
+}
+
+
+.editIcon {
+    padding-left: .5rem;
+    padding-top: .3rem;
 }
 
 .workout table {
@@ -30,9 +52,25 @@
     justify-content: center;
 }
 
-.workout button {
-    margin-top: 2rem;
+/* .workout button {
+    margin-top: 0rem;
     width: 15%;
+} */
+
+.workoutAddRecord {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width:80%;
+}
+
+.workoutAdd {
+    display:flex;
+    height: 2rem;
+}
+
+.workoutRecord button {
+    height: 2rem;
 }
 
 .exercise {
