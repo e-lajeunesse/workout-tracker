@@ -10,6 +10,7 @@ export default function Workout() {
     const [title, setTitle] = useState("");
     const [newTitle, setNewTitle] = useState("");
     const [exercises, setExercises] = useState([]);
+    const [allExercises, setAllExercises] = useState([]);
     const [selectedExercise, setSelectedExercise] = useState({ value: "default", name: "" });
     const [resistance, setResistance] = useState("");
     const [sets, setSets] = useState("");
@@ -26,6 +27,12 @@ export default function Workout() {
         if (savedTitle) {
             setTitle(savedTitle);
         }
+
+        const getExercises = async () => {
+            const response = await fetch("./api/exercises");
+            setAllExercises(await response.json());
+        }
+        getExercises();
     }, []);
 
     useEffect(() => {
@@ -179,7 +186,7 @@ export default function Workout() {
                             </option>
                         ))}
                     </select>
-                    <input type="number" placeholder="Enter Resistance" onChange={handleResistanceChange}></input>
+                    <input type="number" step="any" placeholder="Enter Resistance" onChange={handleResistanceChange}></input>
                     <input type="number" placeholder="Enter Sets" onChange={handleSetsChange}></input>
                     <input type="submit" value="Add Exercise" />
                 </form>
